@@ -6,13 +6,16 @@ var shell;
 var scrollBuffer = [];
 
 $(document).ready(function() {
-    var portAppMap = options.portAppMap;
     shell = $('#shell');
 
-    hotkeys('command+k', function(event, handler){
-      event.preventDefault();
-      clearWindow();
-    });
+    if ('undefined' !== typeof hotkeys) {
+        hotkeys('command+k', function(event, handler){
+            event.preventDefault();
+            clearWindow();
+        });
+    } else {
+        console.warn('Hotkeys library not loaded. Keyboard shortcuts will not work.');
+    }
 
     $('#logs input:checkbox').each(function(idx, el) {
         el = $(el);
