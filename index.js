@@ -80,7 +80,7 @@ function onConnect(socket) {
     };
 
     socket._errHandler = function(err) {
-        socket.emit('logData', data);
+        socket.emit('logData', err);
     };
 
     socket.on('setFormatter', function(data) {
@@ -163,8 +163,11 @@ function onConnect(socket) {
     function socketBelongsToLogger(socket) {
         return R.pathSatisfies(
             (origin) => {
-                return origin.indexOf('http://log.') >= 0 ||
-                    origin.indexOf('http://localhost:9000') >= 0
+                //referer can be absent (e.g. stripped by referrer policy); pathSatisfies still calls the predicate
+                return typeof origin === 'string' && (
+                    origin.indexOf('://log.') >= 0 ||
+                    origin.indexOf('localhost:9000') >= 0
+                );
             },
             ['handshake', 'headers', 'referer'],
             socket
